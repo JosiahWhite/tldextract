@@ -45,6 +45,10 @@ var (
 	ip4regex    = regexp.MustCompile(`(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])`)
 )
 
+var listAdditions = "" + 
+	"us.to\n" // OVH
+
+
 // New creates a new *TLDExtract, it may be shared between goroutines, we usually need a single instance in an application.
 func New(cacheFile string, debug bool) (*TLDExtract, error) {
 	data, err := ioutil.ReadFile(cacheFile)
@@ -209,7 +213,10 @@ func download() ([]byte, error) {
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 
-	lines := strings.Split(string(body), "\n")
+	bodyStr := string(body)
+	bodyStr += listAdditions
+
+	lines := strings.Split(bodyStr, "\n")
 	var buffer bytes.Buffer
 
 	for _, line := range lines {
